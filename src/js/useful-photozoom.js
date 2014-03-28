@@ -21,11 +21,12 @@
 			var a, b;
 			// construct the spinner
 			this.busy = new Busy();
-			this.busy.start();
 			// apply the event handlers
 			for (a = 0, b = this.objs.length; a < b; a += 1) {
 				this.objs[a].addEventListener('click', this.onShow(this.objs[a]), true);
 			}
+			// disable the start function so it can't be started twice
+			this.start = function () {};
 		};
 		this.onHide = function () {
 			var context = this;
@@ -159,6 +160,8 @@
 				}
 			};
 		};
+		// go
+		this.start();
 	};
 
 	// private functions
@@ -168,6 +171,8 @@
 			this.spinner = document.createElement('div');
 			this.spinner.className = 'photozoom-busy photozoom-busy-passive';
 			document.body.appendChild(this.spinner);
+			// disable the start function so it can't be started twice
+			this.start = function () {};
 		};
 		this.show = function () {
 			// show the spinner
@@ -177,6 +182,8 @@
 			// hide the spinner
 			this.spinner.className = this.spinner.className.replace(/-active/gi, '-passive');
 		};
+		// go
+		this.start();
 	};
 
 }(window.useful = window.useful || {}));

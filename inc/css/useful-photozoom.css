@@ -6,26 +6,57 @@
   	Definitions
   */
   /*
+  	Constants
+  */
+  /*
+  	Hides text in the margin
+  */
+  /*
+  	Turns a button into an icon
+  */
+  /*
+  	Centres a graphic inside an icon
+  */
+  /*
+  	Offers both the pixel and rem value of a single property
+  */
+  /*
+  	Offers both the pixel and rem values of a shorthand property
+  */
+  /*
+  	Offers the text size as both the pixel and rem value
+  */
+  /*
+  	Adds vendor prefixed to a property
+  */
+  /*
+  	Applies the "clearfix" hack to a container with floating content
+  */
+  /*
   	Typography
   */
   /*
   	example container style
   */
+  /* line 12, ../../src/scss/useful-photozoom.scss */
   #photozoom {
     margin: 0;
     padding: 0;
   }
+  /* line 15, ../../src/scss/useful-photozoom.scss */
   #photozoom * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     -ms-interpolation-mode: bicubic;
   }
+  /* line 19, ../../src/scss/useful-photozoom.scss */
   #photozoom li {
     display: inline;
     margin: 0;
     padding: 0;
   }
+  /* line 23, ../../src/scss/useful-photozoom.scss */
   #photozoom li img {
     margin-top: 0px;
     margin-top: 0rem;
@@ -44,6 +75,7 @@
   /*
   	component styles
   */
+  /* line 35, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup {
     -webkit-transition: opacity ease;
     -webkit-transition-delay: 500ms;
@@ -63,15 +95,18 @@
     text-align: center;
     z-index: 20000;
   }
+  /* line 49, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     -ms-interpolation-mode: bicubic;
   }
+  /* line 53, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup .photozoom-caption {
     display: none;
   }
+  /* line 57, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup .photozoom-closer {
     overflow: hidden;
     position: relative;
@@ -97,6 +132,7 @@
     text-align: center;
     text-decoration: none;
   }
+  /* line 70, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup .photozoom-closer:before {
     content: '';
     display: block;
@@ -109,16 +145,19 @@
     width: 24px;
     background-image: url(../img/photozoom.png);
   }
+  /* line 74, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup .photozoom-closer:hover {
     background: #ff9800;
   }
 
+  /* line 79, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup-passive {
     opacity: 0;
     -webkit-opacity: 0;
     visibility: hidden\9;
   }
 
+  /* line 84, ../../src/scss/useful-photozoom.scss */
   .photozoom-popup-active {
     opacity: 1;
     -webkit-opacity: 1;
@@ -128,6 +167,7 @@
   /*
   	busy spinner
   */
+  /* line 92, ../../src/scss/useful-photozoom.scss */
   .photozoom-busy {
     border-radius: 5px;
     opacity: 0.8;
@@ -142,10 +182,12 @@
     z-index: 20;
   }
 
+  /* line 105, ../../src/scss/useful-photozoom.scss */
   .photozoom-busy-passive {
     visibility: hidden;
   }
 
+  /* line 108, ../../src/scss/useful-photozoom.scss */
   .photozoom-busy-active {
     visibility: visible;
   }
@@ -154,6 +196,7 @@
   /*
   	The root element
   */
+  /* line 8, ../../src/scss/_typography.scss */
   html {
     font-family: Tahoma, Verdana, Arial, Sans-Serif;
     font-size: 75%;
@@ -163,8 +206,9 @@
   /*
   	Sections
   */
+  /* line 16, ../../src/scss/_typography.scss */
   body {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     margin-top: 0px;
     margin-top: 0rem;
@@ -190,8 +234,9 @@
     min-height: 100%;
   }
 
+  /* line 26, ../../src/scss/_typography.scss */
   h1, h2, h3, h4, h5, h6 {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     margin-top: 0px;
     margin-top: 0rem;
@@ -205,26 +250,31 @@
     font-weight: normal;
   }
 
+  /* line 32, ../../src/scss/_typography.scss */
   h1 {
-    font-size: "22.5px";
+    font-size: 22.5px;
     font-size: 1.875rem;
   }
 
+  /* line 35, ../../src/scss/_typography.scss */
   h2 {
-    font-size: "19.5px";
+    font-size: 19.5px;
     font-size: 1.625rem;
   }
 
+  /* line 38, ../../src/scss/_typography.scss */
   h3 {
-    font-size: "15px";
+    font-size: 15px;
     font-size: 1.25rem;
   }
 
+  /* line 41, ../../src/scss/_typography.scss */
   address {
     display: block;
     font-style: normal;
   }
 
+  /* line 45, ../../src/scss/_typography.scss */
   section, nav, article, aside, hgroup, header, footer {
     display: block;
   }
@@ -232,12 +282,14 @@
   /*
   	Grouping content
   */
+  /* line 51, ../../src/scss/_typography.scss */
   p {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     display: block;
   }
 
+  /* line 55, ../../src/scss/_typography.scss */
   hr {
     margin-top: 12px;
     margin-top: 1rem;
@@ -256,6 +308,7 @@
     width: 100%;
   }
 
+  /* line 65, ../../src/scss/_typography.scss */
   ul {
     margin-top: 0px;
     margin-top: 0rem;
@@ -276,6 +329,7 @@
     display: block;
   }
 
+  /* line 71, ../../src/scss/_typography.scss */
   dl {
     margin-top: 0px;
     margin-top: 0rem;
@@ -288,6 +342,7 @@
     display: block;
   }
 
+  /* line 75, ../../src/scss/_typography.scss */
   dt {
     margin-top: 0px;
     margin-top: 0rem;
@@ -301,6 +356,7 @@
     font-weight: bold;
   }
 
+  /* line 80, ../../src/scss/_typography.scss */
   dd {
     margin-top: 0px;
     margin-top: 0rem;
@@ -313,6 +369,7 @@
     display: block;
   }
 
+  /* line 84, ../../src/scss/_typography.scss */
   pre, dialog, blockquote, ol {
     display: block;
   }
@@ -320,24 +377,29 @@
   /*
   	Text-level semantics
   */
+  /* line 90, ../../src/scss/_typography.scss */
   a {
     color: #ff6a00;
     text-decoration: underline;
   }
 
+  /* line 94, ../../src/scss/_typography.scss */
   a:hover {
     color: #ff9800;
     text-decoration: underline;
   }
 
+  /* line 98, ../../src/scss/_typography.scss */
   sub {
     line-height: 0;
   }
 
+  /* line 101, ../../src/scss/_typography.scss */
   sup {
     line-height: 0;
   }
 
+  /* line 104, ../../src/scss/_typography.scss */
   time, progress, meter {
     display: block;
   }
@@ -345,16 +407,19 @@
   /*
   	Embedded content
   */
+  /* line 110, ../../src/scss/_typography.scss */
   img {
     border: none;
     vertical-align: middle;
   }
 
+  /* line 114, ../../src/scss/_typography.scss */
   figure, figcaption, video, audio, canvas {
     display: block;
   }
 
   /* Tabular data */
+  /* line 118, ../../src/scss/_typography.scss */
   table {
     margin-top: 0px;
     margin-top: 0rem;
@@ -367,20 +432,24 @@
     border-collapse: collapse;
   }
 
+  /* line 122, ../../src/scss/_typography.scss */
   caption {
-    font-size: "15px";
+    font-size: 15px;
     font-size: 1.25rem;
     font-weight: bold;
     text-align: left;
   }
 
+  /* line 128, ../../src/scss/_typography.scss */
   tr {
     vertical-align: top;
   }
+  /* line 130, ../../src/scss/_typography.scss */
   tr:nth-child(2n) {
     background-color: #eeeeee;
   }
 
+  /* line 132, ../../src/scss/_typography.scss */
   th, td {
     padding-top: 6px;
     padding-top: 0.5rem;
@@ -392,6 +461,7 @@
     padding-left: 1rem;
   }
 
+  /* line 135, ../../src/scss/_typography.scss */
   th, th a, th a:hover {
     background-color: #ff9800;
     color: #fff;
@@ -404,6 +474,7 @@
   /*
   	Forms
   */
+  /* line 146, ../../src/scss/_typography.scss */
   form {
     margin-top: 0px;
     margin-top: 0rem;
@@ -415,6 +486,7 @@
     margin-left: 0rem;
   }
 
+  /* line 149, ../../src/scss/_typography.scss */
   fieldset {
     margin-top: 0px;
     margin-top: 0rem;
@@ -436,6 +508,7 @@
     border: none;
   }
 
+  /* line 155, ../../src/scss/_typography.scss */
   legend {
     margin-top: 0px;
     margin-top: 0rem;
@@ -449,13 +522,15 @@
     font-weight: bold;
   }
 
+  /* line 161, ../../src/scss/_typography.scss */
   input, button, select, textarea {
-    font-size: "12px";
+    font-size: 12px;
     font-size: 1rem;
     font-family: Tahoma, Verdana, Arial, Sans-Serif;
     vertical-align: baseline;
   }
 
+  /* line 166, ../../src/scss/_typography.scss */
   input[type=color], input[type=range], input[type=number], input[type=date], input[type=text], input[type=password], input[type=email], select, textarea {
     -webkit-box-shadow: inset 0 0 5px #cccccc;
     -moz-box-shadow: inset 0 0 5px #cccccc;
@@ -479,6 +554,7 @@
     font-family: Arial, Sans-Serif;
   }
 
+  /* line 176, ../../src/scss/_typography.scss */
   input[type=checkbox], input[type=radio] {
     margin-top: 8.4px;
     margin-top: 0.7rem;
@@ -490,6 +566,7 @@
     margin-left: 0rem;
   }
 
+  /* line 179, ../../src/scss/_typography.scss */
   select {
     height: 36px;
     height: 3rem;
@@ -497,6 +574,7 @@
     padding: 0.7rem;
   }
 
+  /* line 183, ../../src/scss/_typography.scss */
   textarea {
     height: 120px;
     height: 10rem;
@@ -504,6 +582,7 @@
     padding: 0.7rem;
   }
 
+  /* line 187, ../../src/scss/_typography.scss */
   button, .button {
     -webkit-transition-property: background-color;
     -moz-transition-property: background-color;
@@ -545,11 +624,13 @@
     overflow: visible;
     text-decoration: none;
   }
+  /* line 202, ../../src/scss/_typography.scss */
   button:hover, .button:hover {
     background-color: #ff9800;
     color: #fff;
     text-decoration: none;
   }
+  /* line 207, ../../src/scss/_typography.scss */
   button.disabled, button.disabled:hover, .button.disabled, .button.disabled:hover {
     background-color: #7f7f7f;
   }
@@ -557,6 +638,7 @@
   /*
   	Interactive elements
   */
+  /* line 214, ../../src/scss/_typography.scss */
   menu {
     margin-top: 0px;
     margin-top: 0rem;
@@ -580,11 +662,13 @@
   /*
   	Miscellaneous elements
   */
+  /* line 222, ../../src/scss/_typography.scss */
   div {
     display: block;
   }
 }
 @media all and (max-width: 480px) {
+  /* line 231, ../../src/scss/_typography.scss */
   html {
     font-size: 62.5%;
   }

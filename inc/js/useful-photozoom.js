@@ -76,7 +76,8 @@
 
 	// allow console.log
 	polyfills.consoleLog = function () {
-		if (!window.console) {
+		var overrideTest = new RegExp('console-log', 'i');
+		if (!window.console || overrideTest.test(document.querySelectorAll('html')[0].className)) {
 			window.console = {};
 			window.console.log = function () {
 				// if the reporting panel doesn't exist
@@ -107,6 +108,8 @@
 				for (a = 0, b = arguments.length; a < b; a += 1) {
 					messages += arguments[a] + '<br/>';
 				}
+				// add a break after the message
+				messages += '<hr/>';
 				// output the queue to the panel
 				reportPanel.innerHTML = messages + reportString;
 			};
@@ -298,11 +301,12 @@
 			var a, b;
 			// construct the spinner
 			this.busy = new Busy();
-			this.busy.start();
 			// apply the event handlers
 			for (a = 0, b = this.objs.length; a < b; a += 1) {
 				this.objs[a].addEventListener('click', this.onShow(this.objs[a]), true);
 			}
+			// disable the start function so it can't be started twice
+			this.start = function () {};
 		};
 		this.onHide = function () {
 			var context = this;
@@ -436,6 +440,8 @@
 				}
 			};
 		};
+		// go
+		this.start();
 	};
 
 	// private functions
@@ -445,6 +451,8 @@
 			this.spinner = document.createElement('div');
 			this.spinner.className = 'photozoom-busy photozoom-busy-passive';
 			document.body.appendChild(this.spinner);
+			// disable the start function so it can't be started twice
+			this.start = function () {};
 		};
 		this.show = function () {
 			// show the spinner
@@ -454,6 +462,8 @@
 			// hide the spinner
 			this.spinner.className = this.spinner.className.replace(/-active/gi, '-passive');
 		};
+		// go
+		this.start();
 	};
 
 }(window.useful = window.useful || {}));
