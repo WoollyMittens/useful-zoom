@@ -19,90 +19,87 @@
 		// methods
 		this.start = function () {
 			var a, b;
+			// apply the default values
+			this.cfg.container = this.cfg.container || document.body;
+			this.cfg.zoom = this.cfg.zoom || 1;
+			this.cfg.sizer = this.cfg.sizer || null;
+			this.cfg.slicer = this.cfg.slicer || '{src}';
 			// construct the spinner
-			this.busy = new Busy();
+			this.busy = new Busy(this.cfg.container);
 			// apply the event handlers
 			for (a = 0, b = this.objs.length; a < b; a += 1) {
-				this.objs[a].addEventListener('click', this.onShow(this.objs[a]), true);
+				this.objs[a].addEventListener('click', this.onShow(this.objs[a]));
 			}
 			// disable the start function so it can't be started twice
 			this.start = function () {};
 		};
-		this.onHide = function () {
-			var context = this;
-			return function () {
-				// close the popup
-				context.hide();
-				// cancel the click
-				return false;
-			};
-		};
 		this.hide = function () {
-			var context = this;
+			var _this = this;
 			// if there is a popup
-			if (this.cfg.popup) {
+			if (this.popup) {
 				// unreveal the popup
-				this.cfg.popup.className = this.cfg.popup.className.replace(/-active/gi, '-passive');
+				this.popup.className = this.popup.className.replace(/-active/gi, '-passive');
 				// and after a while
 				setTimeout(function () {
 					// remove it
-					document.body.removeChild(context.cfg.popup);
+					_this.cfg.container.removeChild(_this.popup);
 					// remove its reference
-					context.cfg.popup = null;
+					_this.popup = null;
+					_this.image = null;
+					_this.gestures = null;
 				}, 500);
 			}
 		};
-		this.onShow = function (obj) {
-			var context = this;
-			return function (event) {
-				// cancel the click
-				event.preventDefault();
-				var url = obj.getAttribute('href') || obj.getAttribute('src'),
-					desc = obj.getAttribute('title') || obj.getAttribute('alt'),
-					image = (obj.nodeName === 'IMG') ? obj : obj.getElementsByTagName('img')[0],
-					aspect = image.offsetHeight / image.offsetWidth;
-				// open the popup
-				context.show(url, desc, aspect);
-			};
-		};
 		this.show = function (url, desc, aspect) {
 			// if the popup doesn't exist
-			if (!this.cfg.popup) {
+			if (!this.popup) {
 				// show the busy indicator
 				this.busy.show();
 				// create a container for the popup
-				this.cfg.popup = document.createElement('figure');
-				this.cfg.popup.className = 'photozoom-popup photozoom-popup-passive';
-				// add the popup to the document
-				document.body.appendChild(this.cfg.popup);
+				this.popup = document.createElement('figure');
+				this.popup.className = (this.cfg.container === document.body) ?
+					'photozoom-popup photozoom-popup-fixed photozoom-popup-passive':
+					'photozoom-popup photozoom-popup-passive';
 				// add a close gadget
 				this.addCloser();
-				// if the description is not known
+				// add the popup to the document
+				this.cfg.container.appendChild(this.popup);
+				// add the touch events
+				this.translation = [0,0,0];
+				this.scaling = [1,1,1];
+				this.gestures = new useful.Gestures( this.popup, {
+					'drag' : this.onTransformed(),
+					'pinch' : this.onTransformed(),
+					'doubleTap' : this.onDoubleTapped()
+				});
+				// use a blank description if not given
 				desc = desc || '';
-				// if the aspect is known
-				if (aspect) {
-					// add the image
-					this.addImage(url, desc, aspect);
-				// else if the size web-service is available
-				} else if (this.cfg.size) {
-					// retrieve the dimensions first
-					var context = this;
-					useful.request.send({
-						url : this.cfg.size.replace(/{src}/g, url),
-						post : null,
-						onProgress : function () {},
-						onFailure : function () {},
-						onSuccess : function (reply) {
-							var dimensions = JSON.parse(reply.responseText);
-							context.addImage(url, desc, dimensions.y[0] / dimensions.x[0]);
-						}
-					});
-				// else just make a wild guess
-				} else {
-					// add the image
-					this.addImage(url, desc, 1);
-				}
+				// figure out the aspect ratio of the image
+				this.checkImage(url, desc, aspect);
 			}
+		};
+		this.zoom = function (coords) {
+			// apply the scaling
+			if (coords.scale !== undefined) {
+				this.scaling[0] = Math.min( Math.max( this.scaling[0] + coords.scale, 1 ), cfg.zoom );
+				this.scaling[1] = Math.min( Math.max( this.scaling[1] + coords.scale, 1 ), cfg.zoom );
+			}
+			// apply the translation
+			if (coords.horizontal !== undefined && coords.vertical !== undefined) {
+				this.translation[0] = this.translation[0] + coords.horizontal / 2 / this.scaling[0];
+				this.translation[1] = this.translation[1] + coords.vertical / 2 / this.scaling[1];
+			}
+			// limit the translation
+			var overscanX = Math.max((this.image.offsetWidth * this.scaling[0] / this.popup.offsetWidth - 1) * 50 / this.scaling[0], 0),
+				overscanY = Math.max((this.image.offsetHeight * this.scaling[1] / this.popup.offsetHeight - 1) * 50 / this.scaling[1], 0);
+			this.translation[0] = Math.min( Math.max( this.translation[0] , -overscanX), overscanX );
+			this.translation[1] = Math.min( Math.max( this.translation[1] , -overscanY), overscanY );
+			// formulate the style rule
+			var scaling = 'scale3d(' + this.scaling.join(',') + ')',
+				translation = 'translate3d(' + this.translation.join('%,') + ')';
+			// apply the style rule
+			this.image.style.transform = scaling + ' ' + translation;
+			this.image.style.webkitTransform = scaling + ' ' + translation;
 		};
 		this.addCloser = function () {
 			var closer;
@@ -112,12 +109,35 @@
 			closer.innerHTML = 'x';
 			closer.href = '#close';
 			// add the close event handler
-			closer.onclick = this.onHide(this);
+			closer.onclick = this.onHide();
 			// add the close gadget to the image
-			this.cfg.popup.appendChild(closer);
+			this.popup.appendChild(closer);
+		};
+		this.checkImage = function (url, desc, aspect) {
+			// if the aspect is known
+			if (aspect) {
+				// add the image
+				this.addImage(url, desc, aspect);
+			// else if the size web-service is available
+			} else if (this.cfg.sizer) {
+				// retrieve the dimensions first
+				var _this = this;
+				useful.request.send({
+					url : this.cfg.sizer.replace(/{src}/g, url),
+					post : null,
+					onProgress : function () {},
+					onFailure : function () {},
+					onSuccess : function (reply) {
+						var dimensions = JSON.parse(reply.responseText);
+						_this.addImage(url, desc, dimensions.y[0] / dimensions.x[0]);
+					}
+				});
+			}
 		};
 		this.addImage = function (url, desc, aspect) {
-			var caption, image, size, width = this.cfg.popup.offsetWidth, height = this.cfg.popup.offsetHeight;
+			var caption, image, size,
+				width = this.popup.offsetWidth,
+				height = this.popup.offsetHeight;
 			// add the caption
 			caption = document.createElement('figcaption');
 			caption.className = 'photozoom-caption';
@@ -131,28 +151,53 @@
 			if (aspect > height / width) {
 				image.setAttribute('width', '');
 				image.setAttribute('height', '100%');
-				size = 'height=' + height;
+				size = 'height=' + (height * this.cfg.zoom);
 			} else {
 				image.setAttribute('width', '100%');
 				image.setAttribute('height', '');
-				size = 'width=' + width;
+				size = 'width=' + (width * this.cfg.zoom);
 			}
 			// add the components to the popup
-			this.cfg.popup.appendChild(image);
-			this.cfg.popup.appendChild(caption);
+			this.popup.appendChild(image);
+			this.popup.appendChild(caption);
+			this.image = image;
 			// load the image
-			image.src = (this.cfg.slice) ? this.cfg.slice.replace('{src}', url).replace('{size}', size) : url;
+			image.src = (this.cfg.slicer) ? this.cfg.slicer.replace('{src}', url).replace('{size}', size) : url;
+		};
+		// events
+		this.onHide = function () {
+			var _this = this;
+			return function (evt) {
+				// cancel the click
+				evt.preventDefault();
+				// close the popup
+				_this.hide();
+			};
+		};
+		this.onShow = function (obj) {
+			var _this = this;
+			return function (event) {
+				// cancel the click
+				event.preventDefault();
+				// try to scrape together the required properties
+				var url = obj.getAttribute('href') || obj.getAttribute('src'),
+					desc = obj.getAttribute('title') || obj.getAttribute('alt'),
+					image = (obj.nodeName === 'IMG') ? obj : obj.getElementsByTagName('img')[0],
+					aspect = image.offsetHeight / image.offsetWidth;
+				// open the popup
+				_this.show(url, desc, aspect);
+			};
 		};
 		this.onReveal = function () {
-			var context = this;
+			var _this = this;
 			return function () {
-				var image, popup = context.cfg.popup;
+				var image, popup = _this.popup;
 				// if there is a popup
 				if (popup) {
 					// find the image in the popup
-					image = context.cfg.popup.getElementsByTagName('img')[0];
+					image = _this.popup.getElementsByTagName('img')[0];
 					// hide the busy indicator
-					context.busy.hide();
+					_this.busy.hide();
 					// centre the image
 					image.style.marginTop = Math.round((popup.offsetHeight - image.offsetHeight) / 2) + 'px';
 					// reveal it
@@ -160,17 +205,34 @@
 				}
 			};
 		};
+		this.onDoubleTapped = function () {
+			var _this = this;
+			return function () {
+				_this.zoom({
+					'scale' : (_this.scaling[0] === 1) ? _this.parent.cfg.zoom : -_this.parent.cfg.zoom,
+				});
+			};
+		};
+		this.onTransformed = function () {
+			var _this = this;
+			return function (coords) {
+				_this.zoom(coords);
+			};
+		};
 		// go
 		this.start();
 	};
 
 	// private functions
-	var Busy = function () {
+	var Busy = function (container) {
+		this.container = container;
 		this.start = function () {
 			// construct the spinner
 			this.spinner = document.createElement('div');
-			this.spinner.className = 'photozoom-busy photozoom-busy-passive';
-			document.body.appendChild(this.spinner);
+			this.spinner.className = (this.container === document.body) ?
+				'photozoom-busy photozoom-busy-fixed photozoom-busy-passive':
+				'photozoom-busy photozoom-busy-passive';
+			this.container.appendChild(this.spinner);
 			// disable the start function so it can't be started twice
 			this.start = function () {};
 		};

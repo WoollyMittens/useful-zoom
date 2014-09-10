@@ -30,14 +30,20 @@ To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5
 
 ```javascript
 var photozoom = new useful.Photozoom( document.querySelectorAll('#photozoom a'), {
-	'size' : './php/imagesize.php?src=../{src}',
-	'slice' : './php/imageslice.php?src=../{src}&{size}',
+	'container' : document.body,
+	'zoom' : 2,
+	'sizer' : './php/imagesize.php?src=../{src}',
+	'slicer' : './php/imageslice.php?src=../{src}&{size}',
 });
 ```
 
-**'size' : {string}** - Optional web-service for sizing images. An example is provided as *./php/imagesize.php*.
+**'container' : {element}** - Restrict the popup to a container.
 
-**'slice' : {string}** - Optional web-service for resizing images. An example is provided as *./php/imageslice.php*.
+**'zoom' : {number}** - Maximum zoom factor for the touch controls.
+
+**'sizer' : {string}** - Optional web-service for sizing images. An example is provided as *./php/imagesize.php*.
+
+**'slicer' : {string}** - Optional web-service for resizing images. An example is provided as *./php/imageslice.php*.
 
 ## How to control the script
 

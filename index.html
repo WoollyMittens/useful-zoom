@@ -43,13 +43,19 @@
 					<li><a href="./inc/img/photo_9a.jpg"><img alt="" src="./inc/img/photo_9.jpg"/></a></li>
 				</ul>
 				<p>
-					<a href="#" onclick="photozoom.show('./inc/img/photo_5a.jpg');">Open an image</a>
+					<a href="#" onclick="photozoom.show('./inc/img/photo_5a.jpg', 'Hello World');">Open an image</a>
 				</p>
 				<script>
 				//<!--
 					var photozoom = new useful.Photozoom( document.querySelectorAll('#photozoom a'), {
-						'size' : 'inc/php/imagesize.php?src=../../{src}',
-						'slice' : 'inc/php/imageslice.php?src=../../{src}&{size}'
+						// restrict the popup to a container
+						'container' : document.body,
+						// zoom factor for the touch controls
+						'zoom' : 2,
+						// optional webservice for determining dimensions
+						'sizer' : 'inc/php/imagesize.php?src=../../{src}',
+						// optional webservice for acquiring sized images
+						'slicer' : 'inc/php/imageslice.php?src=../../{src}&{size}'
 					});
 				//-->
 				</script>

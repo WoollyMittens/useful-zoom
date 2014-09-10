@@ -32,19 +32,22 @@
 #photozoom {
   margin: 0;
   padding: 0;
+  position: relative;
 }
-/* line 10, ../../src/scss/useful-photozoom.scss */
+/* line 11, ../../src/scss/useful-photozoom.scss */
 #photozoom * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   -ms-interpolation-mode: bicubic;
 }
-/* line 14, ../../src/scss/useful-photozoom.scss */
+/* line 15, ../../src/scss/useful-photozoom.scss */
 #photozoom li {
   display: inline;
   margin: 0;
   padding: 0;
 }
-/* line 18, ../../src/scss/useful-photozoom.scss */
+/* line 19, ../../src/scss/useful-photozoom.scss */
 #photozoom li img {
   margin-top: 0px;
   margin-top: 0rem;
@@ -63,10 +66,12 @@
 /*
 	component styles
 */
-/* line 30, ../../src/scss/useful-photozoom.scss */
+/* line 31, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup {
   -webkit-transition: opacity ease;
   -webkit-transition-delay: 500ms;
+  -moz-transition: opacity ease 500ms;
+  -o-transition: opacity ease 500ms;
   transition: opacity ease 500ms;
   -webkit-transition: -webkit-opacity ease 500ms;
   background: rgba(0, 0, 0, 0.9);
@@ -77,20 +82,31 @@
   top: 0;
   margin: 0;
   padding: 0;
-  position: fixed;
+  overflow: hidden;
+  position: absolute;
   text-align: center;
   z-index: 20000;
 }
-/* line 44, ../../src/scss/useful-photozoom.scss */
+/* line 46, ../../src/scss/useful-photozoom.scss */
+.photozoom-popup.photozoom-busy-fixed {
+  position: fixed;
+}
+/* line 49, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
   -ms-interpolation-mode: bicubic;
 }
-/* line 48, ../../src/scss/useful-photozoom.scss */
+/* line 53, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup .photozoom-caption {
   display: none;
 }
-/* line 52, ../../src/scss/useful-photozoom.scss */
+/* line 56, ../../src/scss/useful-photozoom.scss */
+.photozoom-popup .photozoom-image {
+  z-index: 1;
+}
+/* line 59, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup .photozoom-closer {
   overflow: hidden;
   position: relative;
@@ -115,8 +131,9 @@
   position: absolute;
   text-align: center;
   text-decoration: none;
+  z-index: 2;
 }
-/* line 65, ../../src/scss/useful-photozoom.scss */
+/* line 73, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup .photozoom-closer:before {
   content: "";
   display: block;
@@ -133,19 +150,19 @@
   top: 50%;
   background-image: url(../img/photozoom.png);
 }
-/* line 69, ../../src/scss/useful-photozoom.scss */
+/* line 77, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup .photozoom-closer:hover {
   background: #ff9800;
 }
 
-/* line 74, ../../src/scss/useful-photozoom.scss */
+/* line 82, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup-passive {
   opacity: 0;
   -webkit-opacity: 0;
   visibility: hidden\9;
 }
 
-/* line 79, ../../src/scss/useful-photozoom.scss */
+/* line 87, ../../src/scss/useful-photozoom.scss */
 .photozoom-popup-active {
   opacity: 1;
   -webkit-opacity: 1;
@@ -155,7 +172,7 @@
 /*
 	busy spinner
 */
-/* line 87, ../../src/scss/useful-photozoom.scss */
+/* line 95, ../../src/scss/useful-photozoom.scss */
 .photozoom-busy {
   border-radius: 5px;
   opacity: 0.8;
@@ -164,18 +181,22 @@
   height: 48px;
   left: 50%;
   margin: -24px;
-  position: fixed;
+  position: absolute;
   top: 50%;
   width: 48px;
   z-index: 20;
 }
+/* line 107, ../../src/scss/useful-photozoom.scss */
+.photozoom-busy.photozoom-busy-fixed {
+  position: fixed;
+}
 
-/* line 100, ../../src/scss/useful-photozoom.scss */
+/* line 111, ../../src/scss/useful-photozoom.scss */
 .photozoom-busy-passive {
   visibility: hidden;
 }
 
-/* line 103, ../../src/scss/useful-photozoom.scss */
+/* line 114, ../../src/scss/useful-photozoom.scss */
 .photozoom-busy-active {
   visibility: visible;
 }

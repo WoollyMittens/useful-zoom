@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 	var name = 'photozoom';
 	var libs = [
 		'../useful-requests/src/js/useful-requests.js',
+		'../useful-gestures/src/js/useful-gestures.js',
 		'../useful-polyfills/src/js/useful-polyfills.js'
 	];
 	var mixins = [
