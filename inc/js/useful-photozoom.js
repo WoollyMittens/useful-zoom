@@ -79,19 +79,15 @@ var useful = useful || {};
 		this.readEvent = function (event) {
 			var coords = {}, offsets;
 			// try all likely methods of storing coordinates in an event
-			if (event.x !== undefined) {
-				coords.x = event.x;
-				coords.y = event.y;
+			if (event.pageX !== undefined) {
+				coords.x = event.pageX;
+				coords.y = event.pageY;
 			} else if (event.touches && event.touches[0]) {
 				coords.x = event.touches[0].pageX;
 				coords.y = event.touches[0].pageY;
-			} else if (event.pageX !== undefined) {
-				coords.x = event.pageX;
-				coords.y = event.pageY;
 			} else {
-				offsets = this.correctOffset(event.target || event.srcElement);
-				coords.x = event.layerX + offsets.x;
-				coords.y = event.layerY + offsets.y;
+				coords.x = event.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+				coords.y = event.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
 			}
 			return coords;
 		};
@@ -771,7 +767,8 @@ var useful = useful || {};
 
 		// create a request that is compatible with the browser
 		create : function (properties) {
-			var serverRequest;
+			var serverRequest,
+				_this = this;
 			// create a microsoft only xdomain request
 			if (window.XDomainRequest && properties.xdomain) {
 				// create the request object
@@ -790,14 +787,14 @@ var useful = useful || {};
 				serverRequest.timeout = properties.timeout || 0;
 				// add the event handler(s)
 				serverRequest.ontimeout = function () { properties.onTimeout(serverRequest, properties); };
-				serverRequest.onreadystatechange = function () { request.update(serverRequest, properties); };
+				serverRequest.onreadystatechange = function () { _this.update(serverRequest, properties); };
 			}
 			// or use the fall back
 			else {
 				// create the request object
 				serverRequest = new ActiveXObject("Microsoft.XMLHTTP");
 				// add the event handler(s)
-				serverRequest.onreadystatechange = function () { request.update(serverRequest, properties); };
+				serverRequest.onreadystatechange = function () { _this.update(serverRequest, properties); };
 			}
 			// return the request object
 			return serverRequest;
@@ -811,7 +808,7 @@ var useful = useful || {};
 			properties.onTimeout = properties.onTimeout || function () {};
 			properties.onProgress = properties.onProgress || function () {};
 			// create the request object
-			var serverRequest = request.create(properties);
+			var serverRequest = this.create(properties);
 			// if the request is a POST
 			if (properties.post) {
 				try {
@@ -827,7 +824,7 @@ var useful = useful || {};
 			} else {
 				try {
 					// open the request
-					serverRequest.open('GET', request.randomise(properties.url), true);
+					serverRequest.open('GET', this.randomise(properties.url), true);
 					// send the request
 					serverRequest.send();
 				}
@@ -969,8 +966,8 @@ var useful = useful || {};
 				// add the popup to the document
 				this.cfg.container.appendChild(this.popup);
 				// add the touch events
-				this.translation = [0,0,0];
-				this.scaling = [1,1,1];
+				this.translation = [0,0];
+				this.scaling = [1,1];
 				this.gestures = new useful.Gestures( this.popup, {
 					'drag' : this.onTransformed(),
 					'pinch' : this.onTransformed(),
@@ -999,11 +996,12 @@ var useful = useful || {};
 			this.translation[0] = Math.min( Math.max( this.translation[0] , -overscanX), overscanX );
 			this.translation[1] = Math.min( Math.max( this.translation[1] , -overscanY), overscanY );
 			// formulate the style rule
-			var scaling = 'scale3d(' + this.scaling.join(',') + ')',
-				translation = 'translate3d(' + this.translation.join('%,') + ')';
+			var scaling = 'scale(' + this.scaling.join(',') + ')',
+				translation = 'translate(' + this.translation.join('%,') + '%)';
 			// apply the style rule
 			this.image.style.transform = scaling + ' ' + translation;
 			this.image.style.webkitTransform = scaling + ' ' + translation;
+			this.image.style.msTransform = scaling + ' ' + translation;
 		};
 		this.addCloser = function () {
 			var closer;
@@ -1053,12 +1051,12 @@ var useful = useful || {};
 			image.onload = this.onReveal();
 			// pick the dimensions based on the aspect ratio
 			if (aspect > height / width) {
-				image.setAttribute('width', '');
+				image.removeAttribute('width');
 				image.setAttribute('height', '100%');
 				size = 'height=' + (height * this.cfg.zoom);
 			} else {
 				image.setAttribute('width', '100%');
-				image.setAttribute('height', '');
+				image.removeAttribute('height');
 				size = 'width=' + (width * this.cfg.zoom);
 			}
 			// add the components to the popup

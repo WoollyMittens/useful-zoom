@@ -24,7 +24,8 @@ var useful = useful || {};
 
 		// create a request that is compatible with the browser
 		create : function (properties) {
-			var serverRequest;
+			var serverRequest,
+				_this = this;
 			// create a microsoft only xdomain request
 			if (window.XDomainRequest && properties.xdomain) {
 				// create the request object
@@ -43,14 +44,14 @@ var useful = useful || {};
 				serverRequest.timeout = properties.timeout || 0;
 				// add the event handler(s)
 				serverRequest.ontimeout = function () { properties.onTimeout(serverRequest, properties); };
-				serverRequest.onreadystatechange = function () { request.update(serverRequest, properties); };
+				serverRequest.onreadystatechange = function () { _this.update(serverRequest, properties); };
 			}
 			// or use the fall back
 			else {
 				// create the request object
 				serverRequest = new ActiveXObject("Microsoft.XMLHTTP");
 				// add the event handler(s)
-				serverRequest.onreadystatechange = function () { request.update(serverRequest, properties); };
+				serverRequest.onreadystatechange = function () { _this.update(serverRequest, properties); };
 			}
 			// return the request object
 			return serverRequest;
@@ -64,7 +65,7 @@ var useful = useful || {};
 			properties.onTimeout = properties.onTimeout || function () {};
 			properties.onProgress = properties.onProgress || function () {};
 			// create the request object
-			var serverRequest = request.create(properties);
+			var serverRequest = this.create(properties);
 			// if the request is a POST
 			if (properties.post) {
 				try {
@@ -80,7 +81,7 @@ var useful = useful || {};
 			} else {
 				try {
 					// open the request
-					serverRequest.open('GET', request.randomise(properties.url), true);
+					serverRequest.open('GET', this.randomise(properties.url), true);
 					// send the request
 					serverRequest.send();
 				}

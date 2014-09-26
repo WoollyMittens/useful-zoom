@@ -68,8 +68,8 @@ var useful = useful || {};
 				// add the popup to the document
 				this.cfg.container.appendChild(this.popup);
 				// add the touch events
-				this.translation = [0,0,0];
-				this.scaling = [1,1,1];
+				this.translation = [0,0];
+				this.scaling = [1,1];
 				this.gestures = new useful.Gestures( this.popup, {
 					'drag' : this.onTransformed(),
 					'pinch' : this.onTransformed(),
@@ -98,11 +98,12 @@ var useful = useful || {};
 			this.translation[0] = Math.min( Math.max( this.translation[0] , -overscanX), overscanX );
 			this.translation[1] = Math.min( Math.max( this.translation[1] , -overscanY), overscanY );
 			// formulate the style rule
-			var scaling = 'scale3d(' + this.scaling.join(',') + ')',
-				translation = 'translate3d(' + this.translation.join('%,') + ')';
+			var scaling = 'scale(' + this.scaling.join(',') + ')',
+				translation = 'translate(' + this.translation.join('%,') + '%)';
 			// apply the style rule
 			this.image.style.transform = scaling + ' ' + translation;
 			this.image.style.webkitTransform = scaling + ' ' + translation;
+			this.image.style.msTransform = scaling + ' ' + translation;
 		};
 		this.addCloser = function () {
 			var closer;
@@ -152,12 +153,12 @@ var useful = useful || {};
 			image.onload = this.onReveal();
 			// pick the dimensions based on the aspect ratio
 			if (aspect > height / width) {
-				image.setAttribute('width', '');
+				image.removeAttribute('width');
 				image.setAttribute('height', '100%');
 				size = 'height=' + (height * this.cfg.zoom);
 			} else {
 				image.setAttribute('width', '100%');
-				image.setAttribute('height', '');
+				image.removeAttribute('height');
 				size = 'width=' + (width * this.cfg.zoom);
 			}
 			// add the components to the popup
