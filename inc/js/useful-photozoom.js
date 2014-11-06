@@ -79,12 +79,12 @@ var useful = useful || {};
 		this.readEvent = function (event) {
 			var coords = {}, offsets;
 			// try all likely methods of storing coordinates in an event
-			if (event.pageX !== undefined) {
-				coords.x = event.pageX;
-				coords.y = event.pageY;
-			} else if (event.touches && event.touches[0]) {
+			if (event.touches && event.touches[0]) {
 				coords.x = event.touches[0].pageX;
 				coords.y = event.touches[0].pageY;
+			} else if (event.pageX !== undefined) {
+				coords.x = event.pageX;
+				coords.y = event.pageY;
 			} else {
 				coords.x = event.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
 				coords.y = event.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
@@ -783,8 +783,8 @@ var useful = useful || {};
 			else if (window.XMLHttpRequest) {
 				// create the request object
 				serverRequest = new XMLHttpRequest();
-				// set the optional timeout
-				serverRequest.timeout = properties.timeout || 0;
+				// set the optional timeout if available
+				if (serverRequest.timeout) { serverRequest.timeout = properties.timeout || 0; }
 				// add the event handler(s)
 				serverRequest.ontimeout = function () { properties.onTimeout(serverRequest, properties); };
 				serverRequest.onreadystatechange = function () { _this.update(serverRequest, properties); };
