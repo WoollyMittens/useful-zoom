@@ -47,7 +47,9 @@
 				</p>
 				<script>
 				//<!--
-					var photozoom = new useful.Photozoom( document.querySelectorAll('#photozoom a'), {
+					var photozoom = new useful.Photozoom().init({
+						// target elements
+						'elements' : document.querySelectorAll('#photozoom a'),
 						// restrict the popup to a container
 						'container' : document.body,
 						// zoom factor for the touch controls

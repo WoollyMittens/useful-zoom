@@ -29,13 +29,16 @@ To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5
 ## How to start the script
 
 ```javascript
-var photozoom = new useful.Photozoom( document.querySelectorAll('#photozoom a'), {
+var photozoom = new useful.Photozoom().init({
+	'elements' : document.querySelectorAll('#photozoom a'),
 	'container' : document.body,
 	'zoom' : 2,
 	'sizer' : './php/imagesize.php?src=../{src}',
 	'slicer' : './php/imageslice.php?src=../{src}&{size}',
 });
 ```
+
+**'elements' : {array}** - A collection of target elements.
 
 **'container' : {element}** - Restrict the popup to a container.
 
