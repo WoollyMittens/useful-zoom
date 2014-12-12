@@ -11,23 +11,29 @@ var useful = useful || {};
 useful.Gestures = useful.Gestures || function () {};
 
 // extend the constructor
-useful.Gestures.prototype.init = function (cfg) {
-	// properties
+useful.Gestures.prototype.Main = function (config, context) {
+
+	// PROPERTIES
+
 	"use strict";
-	this.cfg = cfg;
-	this.obj = cfg.element;
+	this.config = config;
+	this.context = context;
+	this.element = config.element;
 	this.paused = false;
-	// methods
-	this.start = function () {
+
+	// METHODS
+
+	this.init = function () {
 		// check the configuration properties
-		this.checkConfig(this.cfg);
+		this.config = this.checkConfig(config);
 		// add the single touch events
-		this.single = new this.Single(this);
+		this.single = new this.context.Single(this).init();
 		// add the multi touch events
-		this.multi = new this.Multi(this);
-		// disable the start function so it can't be started twice
-		this.init = function () {};
+		this.multi = new this.context.Multi(this).init();
+		// return the object
+		return this;
 	};
+
 	this.checkConfig = function (config) {
 		// add default values for missing ones
 		config.threshold = config.threshold || 50;
@@ -44,7 +50,10 @@ useful.Gestures.prototype.init = function (cfg) {
 		config.pinch = config.pinch || function () {};
 		config.twist = config.twist || function () {};
 		config.doubleTap = config.doubleTap || function () {};
+		// return the fixed config
+		return config;
 	};
+
 	this.readEvent = function (event) {
 		var coords = {}, offsets;
 		// try all likely methods of storing coordinates in an event
@@ -60,12 +69,13 @@ useful.Gestures.prototype.init = function (cfg) {
 		}
 		return coords;
 	};
+
 	this.correctOffset = function (element) {
 		var offsetX = 0, offsetY = 0;
 		// if there is an offset
 		if (element.offsetParent) {
 			// follow the offsets back to the right parent element
-			while (element !== this.obj) {
+			while (element !== this.element) {
 				offsetX += element.offsetLeft;
 				offsetY += element.offsetTop;
 				element = element.offsetParent;
@@ -74,25 +84,28 @@ useful.Gestures.prototype.init = function (cfg) {
 		// return the offsets
 		return { 'x' : offsetX, 'y' : offsetY };
 	};
-	// external API
+
+	// EXTERNAL
+
 	this.enableDefaultTouch = function () {
-		this.cfg.cancelTouch = false;
+		this.config.cancelTouch = false;
 	};
+
 	this.disableDefaultTouch = function () {
-		this.cfg.cancelTouch = true;
+		this.config.cancelTouch = true;
 	};
+
 	this.enableDefaultGesture = function () {
-		this.cfg.cancelGesture = false;
+		this.config.cancelGesture = false;
 	};
+
 	this.disableDefaultGesture = function () {
-		this.cfg.cancelGesture = true;
+		this.config.cancelGesture = true;
 	};
-	// go
-	this.start();
-	return this;
+
 };
 
 // return as a require.js module
 if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Gestures;
+	exports = module.exports = useful.Gestures.Main;
 }

@@ -16,15 +16,15 @@ useful.Photozoom.prototype.Busy = function (container) {
 	"use strict";
 	this.container = container;
 	// methods
-	this.start = function () {
+	this.init = function () {
 		// construct the spinner
 		this.spinner = document.createElement('div');
 		this.spinner.className = (this.container === document.body) ?
 			'photozoom-busy photozoom-busy-fixed photozoom-busy-passive':
 			'photozoom-busy photozoom-busy-passive';
 		this.container.appendChild(this.spinner);
-		// disable the start function so it can't be started twice
-		this.start = function () {};
+		// return the object
+		return this;
 	};
 	this.show = function () {
 		// show the spinner
@@ -34,8 +34,6 @@ useful.Photozoom.prototype.Busy = function (container) {
 		// hide the spinner
 		this.spinner.className = this.spinner.className.replace(/-active/gi, '-passive');
 	};
-	// go
-	this.start();
 };
 
 // return as a require.js module
