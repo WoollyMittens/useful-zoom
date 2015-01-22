@@ -12,12 +12,16 @@ useful.Photozoom = useful.Photozoom || function () {};
 
 // extend the constructor
 useful.Photozoom.prototype.Main = function (config, context) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.config = config;
 	this.context = context;
 	this.element = config.element;
-	// methods
+
+	// METHODS
+
 	this.init = function () {
 		var a, b;
 		// apply the default values
@@ -32,42 +36,46 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		// return the object
 		return this;
 	};
+
 	this.hide = function () {
 		var _this = this;
 		// if there is a popup
-		if (this.config.popup) {
+		if (this.popup) {
 			// unreveal the popup
-			this.config.popup.className = this.config.popup.className.replace(/-active/gi, '-passive');
+			this.popup.className = this.popup.className.replace(/-active/gi, '-passive');
 			// and after a while
 			setTimeout(function () {
 				// remove it
-				_this.config.container.removeChild(_this.config.popup);
+				_this.config.container.removeChild(_this.popup);
 				// remove its reference
-				_this.config.popup = null;
+				_this.popup = null;
 				_this.image = null;
 				_this.gestures = null;
 			}, 500);
 		}
 	};
+
 	this.show = function (url, desc, aspect) {
 		// if the popup doesn't exist
-		if (!this.config.popup) {
+		if (!this.popup) {
 			// show the busy indicator
 			this.busy.show();
 			// create a container for the popup
-			this.config.popup = document.createElement('figure');
-			this.config.popup.className = (this.config.container === document.body) ?
+			this.popup = document.createElement('figure');
+			this.popup.className = (this.config.container === document.body) ?
 				'photozoom-popup photozoom-popup-fixed photozoom-popup-passive':
 				'photozoom-popup photozoom-popup-passive';
 			// add a close gadget
 			this.addCloser();
+			// add a locator gadget
+			this.addLocator();
 			// add the popup to the document
-			this.config.container.appendChild(this.config.popup);
+			this.config.container.appendChild(this.popup);
 			// add the touch events
 			this.translation = [0,0];
 			this.scaling = [1,1];
 			this.gestures = new useful.Gestures().init({
-				'element' : this.config.popup,
+				'element' : this.popup,
 				'drag' : this.onTransformed(),
 				'pinch' : this.onTransformed(),
 				'doubleTap' : this.onDoubleTapped()
@@ -78,6 +86,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			this.checkImage(url, desc, aspect);
 		}
 	};
+
 	this.zoom = function (coords) {
 		// apply the scaling
 		if (coords.scale !== undefined) {
@@ -90,8 +99,8 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			this.translation[1] = this.translation[1] + coords.vertical / 2 / this.scaling[1];
 		}
 		// limit the translation
-		var overscanX = Math.max((this.image.offsetWidth * this.scaling[0] / this.config.popup.offsetWidth - 1) * 50 / this.scaling[0], 0),
-			overscanY = Math.max((this.image.offsetHeight * this.scaling[1] / this.config.popup.offsetHeight - 1) * 50 / this.scaling[1], 0);
+		var overscanX = Math.max((this.image.offsetWidth * this.scaling[0] / this.popup.offsetWidth - 1) * 50 / this.scaling[0], 0),
+			overscanY = Math.max((this.image.offsetHeight * this.scaling[1] / this.popup.offsetHeight - 1) * 50 / this.scaling[1], 0);
 		this.translation[0] = Math.min( Math.max( this.translation[0] , -overscanX), overscanX );
 		this.translation[1] = Math.min( Math.max( this.translation[1] , -overscanY), overscanY );
 		// formulate the style rule
@@ -102,6 +111,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		this.image.style.webkitTransform = scaling + ' ' + translation;
 		this.image.style.msTransform = scaling + ' ' + translation;
 	};
+
 	this.addCloser = function () {
 		var closer;
 		// build a close gadget
@@ -112,8 +122,22 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		// add the close event handler
 		closer.onclick = this.onHide();
 		// add the close gadget to the image
-		this.config.popup.appendChild(closer);
+		this.popup.appendChild(closer);
 	};
+
+	this.addLocator = function (url) {
+		var parent = this.parent, config = this.config, locator;
+		// build the geo marker icon
+		locator = document.createElement('a');
+		locator.className = 'photozoom-locator';
+		locator.innerHTML = 'Show on a map';
+		locator.href = '#map';
+		// add the event handler
+		locator.onclick = this.onLocate();
+		// add the location marker to the image
+		this.popup.appendChild(locator);
+	};
+
 	this.checkImage = function (url, desc, aspect) {
 		// if the aspect is known
 		if (aspect) {
@@ -135,10 +159,11 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			});
 		}
 	};
+
 	this.addImage = function (url, desc, aspect) {
 		var caption, image, size,
-			width = this.config.popup.offsetWidth,
-			height = this.config.popup.offsetHeight;
+			width = this.popup.offsetWidth,
+			height = this.popup.offsetHeight;
 		// add the caption
 		caption = document.createElement('figcaption');
 		caption.className = 'photozoom-caption';
@@ -148,6 +173,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		image.className = 'photozoom-image';
 		image.setAttribute('alt', desc);
 		image.onload = this.onReveal();
+		image.onerror = this.onFail();
 		// pick the dimensions based on the aspect ratio
 		if (aspect > height / width) {
 			image.removeAttribute('width');
@@ -159,25 +185,42 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			size = 'width=' + (width * this.config.zoom);
 		}
 		// add the components to the popup
-		this.config.popup.appendChild(image);
-		this.config.popup.appendChild(caption);
+		this.popup.appendChild(image);
+		this.popup.appendChild(caption);
 		this.image = image;
 		// load the image
 		image.src = (this.config.slicer) ? this.config.slicer.replace('{src}', url).replace('{size}', size) : url;
 	};
-	// events
+
+	// EVENTS
+
+	this.onLocate = function () {
+		var _this = this;
+		return function () {
+			var config = _this.config;
+			console.log('located', config.located);
+			// trigger the located event if available
+			if (config.located) { config.located(_this.element); }
+		};
+	};
+
 	this.onHide = function () {
 		var _this = this;
 		return function (evt) {
+			var config = _this.config;
 			// cancel the click
 			evt.preventDefault();
 			// close the popup
 			_this.hide();
+			// trigger the closed event if available
+			if (config.closed !== null) { config.closed(_this.element); }
 		};
 	};
+
 	this.onShow = function () {
 		var _this = this;
 		return function (event) {
+			var config = _this.config;
 			// cancel the click
 			event.preventDefault();
 			// try to scrape together the required properties
@@ -187,16 +230,39 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				aspect = image.offsetHeight / image.offsetWidth;
 			// open the popup
 			_this.show(url, desc, aspect);
+			// trigger the opened event if available
+			if (config.opened !== null) { config.opened(_this.element); }
 		};
 	};
+
+	this.onFail = function (index) {
+		var _this = this;
+		return function () {
+			var config = _this.config;
+			// give up on the popup
+			if (_this.popup) {
+				// remove the popup
+				config.container.removeChild(_this.popup);
+				// remove its reference
+				_this.popup = null;
+				_this.image = null;
+				_this.gestures = null;
+			}
+			// hide the busy indicator
+			_this.busy.hide();
+			// trigger the located handler directly
+			if (config.located !== null) { config.located(_this.element); }
+		};
+	};
+
 	this.onReveal = function () {
 		var _this = this;
 		return function () {
-			var image, popup = _this.config.popup;
+			var image, popup = _this.popup;
 			// if there is a popup
 			if (popup) {
 				// find the image in the popup
-				image = _this.config.popup.getElementsByTagName('img')[0];
+				image = _this.popup.getElementsByTagName('img')[0];
 				// hide the busy indicator
 				_this.busy.hide();
 				// centre the image
@@ -206,6 +272,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			}
 		};
 	};
+
 	this.onDoubleTapped = function () {
 		var _this = this;
 		return function () {
@@ -214,6 +281,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			});
 		};
 	};
+
 	this.onTransformed = function () {
 		var _this = this;
 		return function (coords) {

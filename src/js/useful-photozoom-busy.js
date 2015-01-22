@@ -12,10 +12,14 @@ useful.Photozoom = useful.Photozoom || function () {};
 
 // extend the constructor
 useful.Photozoom.prototype.Busy = function (container) {
-	// properties
+
+	// PROPERTIES
+
 	"use strict";
 	this.container = container;
-	// methods
+
+	// METHODS
+
 	this.init = function () {
 		// construct the spinner
 		this.spinner = document.createElement('div');
@@ -26,10 +30,12 @@ useful.Photozoom.prototype.Busy = function (container) {
 		// return the object
 		return this;
 	};
+
 	this.show = function () {
 		// show the spinner
 		this.spinner.className = this.spinner.className.replace(/-passive/gi, '-active');
 	};
+
 	this.hide = function () {
 		// hide the spinner
 		this.spinner.className = this.spinner.className.replace(/-active/gi, '-passive');
