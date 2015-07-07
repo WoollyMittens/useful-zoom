@@ -228,10 +228,10 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				desc = _this.element.getAttribute('title') || _this.element.getAttribute('alt'),
 				image = (_this.element.nodeName === 'IMG') ? _this.element : _this.element.getElementsByTagName('img')[0],
 				aspect = image.offsetHeight / image.offsetWidth;
-			// open the popup
-			_this.show(url, desc, aspect);
 			// trigger the opened event if available
-			if (config.opened !== null) { config.opened(_this.element); }
+			var allowed = (config.opened) ? config.opened(_this.element) : function () { return true; };
+			// show the popup if allowed by the open event
+			if (allowed) { _this.show(url, desc, aspect); }
 		};
 	};
 
@@ -248,10 +248,10 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				_this.image = null;
 				_this.gestures = null;
 			}
+			// trigger the located handler directly
+			if (config.located) { config.located(_this.element); }
 			// hide the busy indicator
 			_this.busy.hide();
-			// trigger the located handler directly
-			if (config.located !== null) { config.located(_this.element); }
 		};
 	};
 
