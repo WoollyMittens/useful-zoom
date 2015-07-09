@@ -1085,25 +1085,26 @@ useful.Photozoom.prototype.Busy = function (container) {
 	// METHODS
 
 	this.init = function () {
-		// construct the spinner
-		this.spinner = document.createElement('div');
-		this.spinner.className = (this.container === document.body) ?
-			'photozoom-busy photozoom-busy-fixed photozoom-busy-passive':
-			'photozoom-busy photozoom-busy-passive';
-		this.container.appendChild(this.spinner);
-		// return the object
-		return this;
+		// not needed yet
 	};
 
 	this.show = function () {
-		// show the spinner
-		this.spinner.className = this.spinner.className.replace(/-passive/gi, '-active');
+		// construct the spinner
+		this.spinner = document.createElement('div');
+		this.spinner.className = (this.container === document.body) ?
+			'photozoom-busy photozoom-busy-fixed photozoom-busy-active':
+			'photozoom-busy photozoom-busy-active';
+		this.container.appendChild(this.spinner);
 	};
 
 	this.hide = function () {
-		// hide the spinner
-		this.spinner.className = this.spinner.className.replace(/-active/gi, '-passive');
+		// deconstruct the spinner
+		if (this.spinner) {
+			this.container.removeChild(this.spinner);
+			this.spinner = null;
+		}
 	};
+
 };
 
 // return as a require.js module
@@ -1142,10 +1143,10 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		this.config.zoom = this.config.zoom || 1;
 		this.config.sizer = this.config.sizer || null;
 		this.config.slicer = this.config.slicer || '{src}';
-		// construct the spinner
-		this.busy = new this.context.Busy(this.config.container).init();
 		// apply the event handlers
 		this.element.addEventListener('click', this.onShow());
+		// create the busy pointer
+		this.busy = new this.context.Busy(this.config.container);
 		// return the object
 		return this;
 	};
@@ -1168,7 +1169,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		}
 	};
 
-	this.show = function (url, desc, aspect) {
+	this.show = function (element) {
 		// if the popup doesn't exist
 		if (!this.popup) {
 			// show the busy indicator
@@ -1191,12 +1192,12 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				'element' : this.popup,
 				'drag' : this.onTransformed(),
 				'pinch' : this.onTransformed(),
-				'doubleTap' : this.onDoubleTapped()
+				'doubleTap' : this.onDoubleTapped(),
+				'swipeLeft' : this.onSwiped('left'),
+		    	'swipeRight' : this.onSwiped('right')
 			});
-			// use a blank description if not given
-			desc = desc || '';
 			// figure out the aspect ratio of the image
-			this.checkImage(url, desc, aspect);
+			this.checkImage(element, '0%');
 		}
 	};
 
@@ -1251,11 +1252,16 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		this.popup.appendChild(locator);
 	};
 
-	this.checkImage = function (url, desc, aspect) {
+	this.checkImage = function (element, offset) {
+		// try to scrape together the required properties
+		var url = element.getAttribute('href') || element.getAttribute('src'),
+			desc = element.getAttribute('title') || element.getAttribute('alt') || '',
+			image = (element.nodeName === 'IMG') ? element : element.getElementsByTagName('img')[0],
+			aspect = image.offsetHeight / image.offsetWidth;
 		// if the aspect is known
 		if (aspect) {
 			// add the image
-			this.addImage(url, desc, aspect);
+			this.addImage(url, desc, aspect, offset);
 		// else if the size web-service is available
 		} else if (this.config.sizer) {
 			// retrieve the dimensions first
@@ -1267,13 +1273,13 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				onFailure : function () {},
 				onSuccess : function (reply) {
 					var dimensions = JSON.parse(reply.responseText);
-					_this.addImage(url, desc, dimensions.y[0] / dimensions.x[0]);
+					_this.addImage(url, desc, dimensions.y[0] / dimensions.x[0], offset);
 				}
 			});
 		}
 	};
 
-	this.addImage = function (url, desc, aspect) {
+	this.addImage = function (url, desc, aspect, offset) {
 		var caption, image, size,
 			width = this.popup.offsetWidth,
 			height = this.popup.offsetHeight;
@@ -1284,6 +1290,8 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		// add the zoomed image
 		image = document.createElement('img');
 		image.className = 'photozoom-image';
+		image.style.visibility = 'hidden';
+		image.style.left = offset || '0%';
 		image.setAttribute('alt', desc);
 		image.onload = this.onReveal();
 		image.onerror = this.onFail();
@@ -1301,8 +1309,49 @@ useful.Photozoom.prototype.Main = function (config, context) {
 		this.popup.appendChild(image);
 		this.popup.appendChild(caption);
 		this.image = image;
+		this.caption = caption;
 		// load the image
 		image.src = (this.config.slicer) ? this.config.slicer.replace('{src}', url).replace('{size}', size) : url;
+	};
+
+	this.changeImage = function (direction) {
+		var _this = this;
+		// if there is more than one photo
+		if (this.config.elements.length > 1) {
+			// have the old element it slide off screen in the direction of the swipe
+			this.image.style.left = (direction === 'left') ? '-100%' : '100%';
+			setTimeout(function () {
+				// remove the old image
+				_this.popup.removeChild(_this.image);
+				_this.popup.removeChild(_this.caption);
+				// show the spinner
+				_this.busy.show();
+				// update the element with the next one from this.elements
+				_this.element = _this.findImage(_this.element, _this.config.elements, (direction === 'left') ? 1 : -1);
+				// have the new element slide on screen from the direction of the swipe
+				_this.checkImage(_this.element, (direction === 'left') ? '100%' : '-100%');
+				// trigger the opener event
+				if (_this.config.opened) { _this.config.opened(_this.element); }
+			}, 500);
+		}
+	};
+
+	this.findImage = function (element, elements, offset) {
+		var a, b, index = 0;
+		// find the current element
+		for (a = 0, b = elements.length; a < b; a += 1) {
+			if (element === elements[a]) {
+				if (a + offset < 0) {
+					return elements[elements.length - 1];
+				} else if (a + offset >= elements.length) {
+					return elements[0];
+				} else {
+						return elements[a + offset];
+				}
+			}
+		}
+		// fall back
+		return element;
 	};
 
 	// EVENTS
@@ -1326,7 +1375,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			// close the popup
 			_this.hide();
 			// trigger the closed event if available
-			if (config.closed !== null) { config.closed(_this.element); }
+			if (config.closed) { config.closed(_this.element); }
 		};
 	};
 
@@ -1336,15 +1385,10 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			var config = _this.config;
 			// cancel the click
 			event.preventDefault();
-			// try to scrape together the required properties
-			var url = _this.element.getAttribute('href') || _this.element.getAttribute('src'),
-				desc = _this.element.getAttribute('title') || _this.element.getAttribute('alt'),
-				image = (_this.element.nodeName === 'IMG') ? _this.element : _this.element.getElementsByTagName('img')[0],
-				aspect = image.offsetHeight / image.offsetWidth;
 			// trigger the opened event if available
 			var allowed = (config.opened) ? config.opened(_this.element) : function () { return true; };
 			// show the popup if allowed by the open event
-			if (allowed) { _this.show(url, desc, aspect); }
+			if (allowed) { _this.show(_this.element); }
 		};
 	};
 
@@ -1362,7 +1406,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				_this.gestures = null;
 			}
 			// trigger the located handler directly
-			if (config.located) { config.located(_this.element); }
+			if (config.located !== null) { config.located(_this.element); }
 			// hide the busy indicator
 			_this.busy.hide();
 		};
@@ -1381,6 +1425,9 @@ useful.Photozoom.prototype.Main = function (config, context) {
 				// centre the image
 				image.style.marginTop = Math.round((popup.offsetHeight - image.offsetHeight) / 2) + 'px';
 				// reveal it
+				image.style.visibility = 'visible';
+				image.style.left = '0%';
+				// show the popup
 				popup.className = popup.className.replace(/-passive/gi, '-active');
 			}
 		};
@@ -1401,6 +1448,18 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			_this.zoom(coords);
 		};
 	};
+
+	this.onSwiped = function (direction) {
+		var _this = this;
+		return function () {
+			// if we're at zoom level 1
+			if (_this.scaling[0] === 1) {
+				// pick the direction
+				_this.changeImage(direction);
+			}
+		};
+	};
+
 };
 
 // return as a require.js module
@@ -1424,16 +1483,16 @@ useful.Photozoom = useful.Photozoom || function () {};
 useful.Photozoom.prototype.init = function (config) {
 
 	// PROPERTIES
-	
+
 	"use strict";
 
 	// METHODS
-	
+
 	this.only = function (config) {
 		// start an instance of the script
 		return new this.Main(config, this).init();
 	};
-	
+
 	this.each = function (config) {
 		var _config, _context = this, instances = [];
 		// for all element
@@ -1442,8 +1501,6 @@ useful.Photozoom.prototype.init = function (config) {
 			_config = Object.create(config);
 			// insert the current element
 			_config.element = config.elements[a];
-			// delete the list of elements from the clone
-			delete _config.elements;
 			// start a new instance of the object
 			instances[a] = new this.Main(_config, _context).init();
 		}
