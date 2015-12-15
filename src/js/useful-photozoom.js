@@ -26,7 +26,7 @@ useful.Photozoom.prototype.init = function (config) {
 
 	this.each = function (config) {
 		var _config, _context = this, instances = [];
-		// for all element
+		// for all elements
 		for (var a = 0, b = config.elements.length; a < b; a += 1) {
 			// clone the configuration
 			_config = Object.create(config);

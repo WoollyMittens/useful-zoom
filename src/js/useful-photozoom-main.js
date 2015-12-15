@@ -141,7 +141,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 	this.checkImage = function (element, offset) {
 		// try to scrape together the required properties
 		var url = element.getAttribute('href') || element.getAttribute('src'),
-			desc = element.getAttribute('title') || element.getAttribute('alt') || '',
+			desc = element.getAttribute('title') || element.getAttribute('alt') || element.getAttribute('data-desc') || '',
 			image = (element.nodeName === 'IMG') ? element : element.getElementsByTagName('img')[0],
 			aspect = image.offsetHeight / image.offsetWidth;
 		// if the aspect is known
@@ -171,7 +171,7 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			height = this.popup.offsetHeight;
 		// add the caption
 		caption = document.createElement('figcaption');
-		caption.className = 'photozoom-caption';
+		caption.className = (desc !== '') ? 'photozoom-caption' : 'photozoom-caption photozoom-caption-hidden';
 		caption.innerHTML = desc;
 		// add the zoomed image
 		image = document.createElement('img');
@@ -191,10 +191,11 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			image.removeAttribute('height');
 			size = 'width=' + (width * this.config.zoom);
 		}
-		// add the components to the popup
+		// add the image to the popup
 		this.popup.appendChild(image);
-		this.popup.appendChild(caption);
 		this.image = image;
+		// add the caption to the popup
+		this.popup.appendChild(caption);
 		this.caption = caption;
 		// load the image
 		image.src = (this.config.slicer) ? this.config.slicer.replace('{src}', url).replace('{size}', size) : url;
@@ -258,6 +259,8 @@ useful.Photozoom.prototype.Main = function (config, context) {
 			var config = _this.config;
 			// cancel the click
 			evt.preventDefault();
+			// hide the spinner
+			_this.busy.hide();
 			// close the popup
 			_this.hide();
 			// trigger the closed event if available
