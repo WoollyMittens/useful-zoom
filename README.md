@@ -44,7 +44,7 @@ var photozoom = new useful.Photozoom().init({
 
 **'zoom' : {number}** - Maximum zoom factor for the touch controls.
 
-**'sizer' : {string}** - Optional web-service for sizing images. An example is provided as *./php/imagesize.php*.
+**'sizer' : {string}** - Optional web-service for measuring images. An example is provided as *./php/imagesize.php*.
 
 **'slicer' : {string}** - Optional web-service for resizing images. An example is provided as *./php/imageslice.php*.
 
@@ -53,21 +53,15 @@ var photozoom = new useful.Photozoom().init({
 ### Open
 
 ```javascript
-photozoom.open(url, desc, aspect);
+photozoom.show();
 ```
 
-Shows the popup using a specified url.
-
-**'url' : {string}** - The url of the image to be displayed.
-
-**'desc' : {string}** - An optional description to be used as a caption.
-
-**'aspect' : {string}** - An optional aspect ratio of the image. If not provided the optional "imagesize.php" will be used instead. If neither is available a default value of 1 will be used.
+Shows the popup belonging to instance.
 
 ### Close
 
 ```javascript
-photozoom.close();
+photozoom.hide();
 ```
 
 Hides the popup.

@@ -43,11 +43,11 @@
 					<li><a href="./img/photo_9a.jpg"><img alt="" src="./img/photo_9.jpg"/></a></li>
 				</ul>
 				<p>
-					<a href="#" onclick="photozoom.show('./img/photo_5a.jpg', 'Hello World');">Open an image</a>
+					<a href="#" onclick="photozooms[3].show();">Open an image</a>
 				</p>
 				<script>
 				//<!--
-					var photozoom = new useful.Photozoom().init({
+					var photozooms = new useful.Photozoom().init({
 						// target elements
 						'elements' : document.querySelectorAll('#photozoom a'),
 						// restrict the popup to a container
