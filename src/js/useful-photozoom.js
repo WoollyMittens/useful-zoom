@@ -6,11 +6,11 @@
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
 */
 
-// create the constructor if needed
+// create the class if needed
 var useful = useful || {};
 useful.Photozoom = useful.Photozoom || function () {};
 
-// extend the constructor
+// add the prototype methods
 useful.Photozoom.prototype.init = function (config) {
 
 	// PROPERTIES
@@ -39,7 +39,7 @@ useful.Photozoom.prototype.init = function (config) {
 		return instances;
 	};
 
-	// START
+	// EXECUTE SELF
 
 	return (config.elements) ? this.each(config) : this.only(config);
 

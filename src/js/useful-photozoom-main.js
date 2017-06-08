@@ -302,7 +302,7 @@ useful.Photozoom.prototype.Main = function(config, context) {
       this.gestures = null;
     }
     // trigger the located handler directly
-    if (config.located !== null) {
+    if (config.located) {
       config.located(this.element);
     }
     // hide the busy indicator
