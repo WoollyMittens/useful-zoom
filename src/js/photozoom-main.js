@@ -1,21 +1,8 @@
-/*
-	Source:
-	van Creij, Maurice (2014). "useful.photozoom.js: Overlays a full screen preview of a thumbnail", version 20141127, http://www.woollymittens.nl/.
-
-	License:
-	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
-*/
-
-// create the constructor if needed
-var useful = useful || {};
-useful.Photozoom = useful.Photozoom || function() {};
-
-// extend the constructor
-useful.Photozoom.prototype.Main = function(config, context) {
+// extend the class
+Photozoom.prototype.Main = function(config, context) {
 
   // PROPERTIES
 
-  "use strict";
   this.context = context;
   this.element = config.element;
   this.config = {
@@ -25,18 +12,11 @@ useful.Photozoom.prototype.Main = function(config, context) {
     'slicer': '{src}'
   };
 
-  for (name in config) {
-    this.config[name] = config[name];
+  for (key in config) {
+    this.config[key] = config[key];
   }
 
   // METHODS
-
-  this.init = function() {
-    // apply the event handlers
-    this.element.addEventListener('click', this.onShow.bind(this));
-    // return the object
-    return this;
-  };
 
   this.hide = function() {
     // if there is a popup
@@ -252,8 +232,6 @@ useful.Photozoom.prototype.Main = function(config, context) {
     return element;
   };
 
-  // EVENTS
-
   this.onLocate = function() {
     var config = this.config;
     // trigger the located event if available
@@ -345,9 +323,8 @@ useful.Photozoom.prototype.Main = function(config, context) {
     }
   };
 
-};
+  // EVENTS
 
-// return as a require.js module
-if (typeof module !== 'undefined') {
-  exports = module.exports = useful.Photozoom.Main;
-}
+  this.element.addEventListener('click', this.onShow.bind(this));
+
+};

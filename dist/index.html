@@ -28,8 +28,8 @@
 			<aside>
 
 				<!-- Cut below this -->
-				<style>@import url("./css/useful-photozoom.css");</style>
-				<script src="./js/useful-photozoom.js"></script>
+				<style>@import url("./css/photozoom.css");</style>
+				<script src="./js/photozoom.js"></script>
 				<ul class="photozoom" id="photozoom">
 					<li><a href="./img/photo_0a.jpg"><img alt="" src="./img/photo_0.jpg"/></a></li>
 					<li><a href="./img/photo_1a.jpg"><img alt="" src="./img/photo_1.jpg"/></a></li>
@@ -46,7 +46,7 @@
 				</p>
 				<script>
 				//<!--
-					var photozooms = new useful.Photozoom().init({
+					var photozooms = new Photozoom({
 						// target elements
 						'elements' : document.querySelectorAll('#photozoom a'),
 						// restrict the popup to a container

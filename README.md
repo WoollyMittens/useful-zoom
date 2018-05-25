@@ -1,4 +1,4 @@
-# useful.photozoom.js: Photo Zoom
+# photozoom.js: Photo Zoom
 
 Overlays a full screen preview of a thumbnail.
 
@@ -9,27 +9,19 @@ Try the <a href="http://www.woollymittens.nl/default.php?url=useful-photozoom">d
 The stylesheet is best included in the header of the document.
 
 ```html
-<link rel="stylesheet" href="./css/useful-photozoom.css"/>
+<link rel="stylesheet" href="./css/photozoom.css"/>
 ```
 
 This include can be added to the header or placed inline before the script is invoked.
 
 ```html
-<script src="./js/useful-photozoom.js"></script>
-```
-
-To enable the use of HTML5 tags in Internet Explorer 8 and lower, include *html5.js*.
-
-```html
-<!--[if lte IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
+<script src="./js/photozoom.js"></script>
 ```
 
 ## How to start the script
 
 ```javascript
-var photozoom = new useful.Photozoom().init({
+var photozoom = new Photozoom({
 	'elements' : document.querySelectorAll('#photozoom a'),
 	'container' : document.body,
 	'zoom' : 2,

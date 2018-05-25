@@ -21,7 +21,7 @@
 			padding: 0;
 
 			img {
-				@include rems( 'margin', 0, 0, 0.33, 0);
+				margin: 0 0 0.33rem 0;
 				display: inline-block;
 				height: 96px;
 				width: auto;
@@ -35,7 +35,6 @@
 	.photozoom-popup {
 		transition: opacity ease 500ms;
 		background: rgba(0, 0, 0, 0.9);
-		background: #000\9;
 		bottom: 0;
 		left: 0;
 		right: 0;
@@ -82,10 +81,10 @@
 		.photozoom-closer,
 		.photozoom-locator {
 			@include iconParent(48);
-			@include rem( 'width', 3);
-			@include rem( 'height', 3);
-			@include rem( 'right', 1);
-			@include rem( 'top', 1);
+			width: 3rem;
+			height: 3rem;
+			right: 1rem;
+			top: 1rem;
 			background: #000086;
 			color: #fff;
 			cursor: pointer;
@@ -107,7 +106,7 @@
 		}
 
 		.photozoom-locator {
-			@include rem( 'right', 5);
+			right: 5rem;
 			display: none;
 
 			&:before {
@@ -118,14 +117,10 @@
 
 	.photozoom-popup-passive {
 		opacity: 0;
-		-webkit-opacity: 0;
-		visibility: hidden\9;
 	}
 
 	.photozoom-popup-active {
 		opacity: 1;
-		-webkit-opacity: 1;
-		visibility: visible\9;
 	}
 	/*
 		busy spinner
@@ -133,7 +128,6 @@
 	.photozoom-busy {
 		border-radius: 5px;
 		opacity: 0.8;
-		-webkit-opacity: 0.8;
 		background: #000 url("../img/busy.gif") no-repeat 50% 50%;
 		height: 48px;
 		left: 50%;
