@@ -56,7 +56,7 @@ Photozoom.prototype.Main = function(config, context) {
       // add the touch events
       this.translation = [0, 0];
       this.scaling = [1, 1];
-      this.gestures = new useful.Gestures().init({
+      this.gestures = new Gestures({
         'element': this.popup,
         'drag': this.onTransformed.bind(this),
         'pinch': this.onTransformed.bind(this),
@@ -140,7 +140,7 @@ Photozoom.prototype.Main = function(config, context) {
     } else if (this.config.sizer) {
       // retrieve the dimensions first
       var _this = this;
-      useful.request.send({
+      requests.send({
         url: this.config.sizer.replace(/{src}/g, url),
         post: null,
         onProgress: function() {},

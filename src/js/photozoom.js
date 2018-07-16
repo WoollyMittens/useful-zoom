@@ -1,6 +1,6 @@
 /*
 	Source:
-	van Creij, Maurice (2018). "photozoom.js: Overlays a full screen preview of a thumbnail", version 20141127, http://www.woollymittens.nl/.
+	van Creij, Maurice (2018). "photozoom.js: Overlays a full screen preview of a thumbnail", http://www.woollymittens.nl/.
 
 	License:
 	This work is licensed under a Creative Commons Attribution 3.0 Unported License.
