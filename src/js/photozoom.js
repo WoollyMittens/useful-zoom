@@ -34,6 +34,5 @@ var Photozoom = function (config) {
 };
 
 // return as a require.js module
-if (typeof module !== 'undefined') {
-	exports = module.exports = useful.Photozoom;
-}
+if (typeof define != 'undefined') define(['photozoom'], function () { return Photozoom });
+if (typeof module != 'undefined') module.exports = Photozoom;
