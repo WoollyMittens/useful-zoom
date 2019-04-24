@@ -18,6 +18,24 @@ This include can be added to the header or placed inline before the script is in
 <script src="./js/photozoom.js"></script>
 ```
 
+Or use [Require.js](https://requirejs.org/).
+
+```js
+requirejs([
+	"./js/photozoom.js",
+	"./lib/requests.js",
+	"./lib/gestures.js"
+], function(Photozoom, requests, Gestures) {
+	...
+});
+```
+
+Or import into an MVC framework.
+
+```js
+var Photozoom = require('./js/photozoom.js');
+```
+
 ## How to start the script
 
 ```javascript
