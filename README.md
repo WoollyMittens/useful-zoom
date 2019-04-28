@@ -9,23 +9,25 @@ Try the <a href="http://www.woollymittens.nl/default.php?url=useful-photozoom">d
 The stylesheet is best included in the header of the document.
 
 ```html
-<link rel="stylesheet" href="./css/photozoom.css"/>
+<link rel="stylesheet" href="css/photozoom.css"/>
 ```
 
 This include can be added to the header or placed inline before the script is invoked.
 
 ```html
-<script src="./js/photozoom.js"></script>
+<script src="lib/requests.js"></script>
+<script src="lib/gestures.js"></script>
+<script src="js/photozoom.js"></script>
 ```
 
 Or use [Require.js](https://requirejs.org/).
 
 ```js
 requirejs([
-	"./js/photozoom.js",
-	"./lib/requests.js",
-	"./lib/gestures.js"
-], function(Photozoom, requests, Gestures) {
+	"lib/requests.js",
+	"lib/gestures.js",
+	"js/photozoom.js"
+], function(requests, Gestures, Photozoom) {
 	...
 });
 ```
@@ -33,7 +35,9 @@ requirejs([
 Or import into an MVC framework.
 
 ```js
-var Photozoom = require('./js/photozoom.js');
+var requests = require('lib/requests.js');
+var Gestures = require('lib/gestures.js');
+var Photozoom = require('js/photozoom.js');
 ```
 
 ## How to start the script
