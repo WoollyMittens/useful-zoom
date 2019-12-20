@@ -47,8 +47,8 @@ var photozoom = new Photozoom({
 	'elements' : document.querySelectorAll('#photozoom a'),
 	'container' : document.body,
 	'zoom' : 2,
-	'sizer' : 'php/imagesize.php?src=../{src}',
-	'slicer' : 'php/imageslice.php?src=../{src}&{size}',
+	'sizer' : 'php/imagesize.php?src={src}',
+	'slicer' : 'php/imageslice.php?src={src}&{size}',
 });
 ```
 
