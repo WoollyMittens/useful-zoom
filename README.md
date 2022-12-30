@@ -2,8 +2,6 @@
 
 Overlays a full screen preview of a thumbnail.
 
-Try the <a href="http://www.woollymittens.nl/default.php?url=useful-photozoom">demo</a>.
-
 ## How to include the script
 
 The stylesheet is best included in the header of the document.
